@@ -54,7 +54,8 @@ form.addEventListener('submit', async (e) => {
   const driver_contact = document.getElementById('driver_contact').value.trim();
   const current_junction = document.getElementById('current_junction').value;
   const destination = document.getElementById('destination').value.trim();
-  const notes = document.getElementById('notes').value.trim();
+  const notesEl = document.getElementById('notes');
+  const notes = notesEl ? notesEl.value.trim() : '';
 
   if (!current_junction) {
     showStatus('err', 'Please select the current junction.');
