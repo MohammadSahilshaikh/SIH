@@ -124,7 +124,6 @@ function renderRequests() {
       </div>
       <div class="req-item__meta">
         ${r.current_junction} → ${r.destination} · ${timeAgo(r.created_at)}<br>
-        <strong>Contact:</strong> ${r.driver_contact || 'N/A'}<br>
         Route: ${(r.route || []).join(' → ')}
       </div>
       <div class="req-item__actions">

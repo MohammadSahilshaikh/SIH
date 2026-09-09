@@ -51,6 +51,7 @@ form.addEventListener('submit', async (e) => {
 
   const vehicle_type = form.querySelector('input[name="vehicle_type"]:checked').value;
   const vehicle_number = document.getElementById('vehicle_number').value.trim();
+  const driver_name = document.getElementById('driver_name').value.trim();
   const driver_contact = document.getElementById('driver_contact').value.trim();
   const current_junction = document.getElementById('current_junction').value;
   const destination = document.getElementById('destination').value.trim();
@@ -75,6 +76,7 @@ form.addEventListener('submit', async (e) => {
         .insert([{
           vehicle_type,
           vehicle_number,
+          driver_name,
           driver_contact,
           current_junction,
           destination,
