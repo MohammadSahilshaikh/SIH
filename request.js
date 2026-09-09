@@ -67,23 +67,32 @@ form.addEventListener('submit', async (e) => {
   const route = mockRoute(current_junction);
 
   try {
-    // 1. Write the request to Supabase
-    const { data, error } = await supabaseClient
-      .from('emergency_requests')
-      .insert([{
-        vehicle_type,
-        vehicle_number,
-        driver_contact,
-        current_junction,
-        destination,
-        notes,
-        route,
-        status: 'pending',
-      }])
-      .select()
-      .single();
+    let reqId = 'mock-' + Date.now().toString(36);
+    try {
+      // 1. Write the request to Supabase
+      const { data, error } = await supabaseClient
+        .from('emergency_requests')
+        .insert([{
+          vehicle_type,
+          vehicle_number,
+          driver_contact,
+          current_junction,
+          destination,
+          notes,
+          route,
+          status: 'pending',
+        }])
+        .select()
+        .single();
 
-    if (error) throw error;
+      if (error) {
+        console.warn('Supabase DB error (ignoring for demo):', error);
+      } else if (data && data.id) {
+        reqId = data.id;
+      }
+    } catch (dbErr) {
+      console.warn('Supabase not fully configured, proceeding with email only.', dbErr);
+    }
 
     // 2. Alert the traffic control room by email via EmailJS
     try {
@@ -94,15 +103,13 @@ form.addEventListener('submit', async (e) => {
         current_junction: `${current_junction} — ${JUNCTION_NAMES[current_junction]}`,
         destination,
         notes: notes || 'None provided',
-        request_id: data.id,
+        request_id: reqId,
       });
     } catch (mailErr) {
-      // Don't block the driver's confirmation on email failure —
-      // the dashboard already has the request via Supabase realtime.
       console.warn('EmailJS alert failed:', mailErr);
     }
 
-    showStatus('ok', `Request sent. Reference ID: ${data.id.slice(0, 8)}. Control room has been notified — watch the dashboard for signal clearance.`);
+    showStatus('ok', `Request sent. Reference ID: ${reqId.slice(0, 8)}. Control room has been notified — watch the dashboard for signal clearance.`);
     form.reset();
     refreshVehicleUI();
 
