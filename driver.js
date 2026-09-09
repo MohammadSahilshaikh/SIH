@@ -1,6 +1,5 @@
 let map;
-let directionsService;
-let directionsRenderer;
+let routingControl;
 
 // Mock Database of Hospitals in Kolkata (Moved from Python to JS for Vercel Hosting)
 const KOLKATA_HOSPITALS = [
@@ -25,6 +24,7 @@ function loadHospitals() {
 
 document.addEventListener('DOMContentLoaded', () => {
   loadHospitals();
+  initMap(); // Initialize Leaflet immediately
   
   document.getElementById('btn-find-route').addEventListener('click', () => {
     const startObj = JSON.parse(document.getElementById('start-location').value);
@@ -58,42 +58,49 @@ document.addEventListener('DOMContentLoaded', () => {
         <span style="font-size:12px; font-weight:normal;">Traffic Index: ${mockTrafficMultiplier} (Lower is faster)</span>
       `;
       
-      // If Google Maps API is loaded, draw the route
-      if (typeof google !== 'undefined' && google.maps) {
+      // If Leaflet API is loaded, draw the route
+      if (typeof L !== 'undefined') {
         drawRouteOnMap(startObj, {lat: bestHospital.lat, lng: bestHospital.lng});
       } else {
         document.getElementById('map').innerHTML = `<div style="padding:40px; text-align:center; color:#fff;">
-          <strong>Google Maps API Not Loaded</strong><br>
+          <strong>Map Library Not Loaded</strong><br>
           We have calculated the route to: ${bestHospital.name}.<br>
-          To see the visual map, please add your Google Maps API Key.
         </div>`;
       }
     }
   });
 });
 
-// Initialization function for Google Maps (called if API script is loaded)
+// Initialization function for Leaflet
 function initMap() {
-  const defaultPos = { lat: 22.5726, lng: 88.3639 }; // Kolkata
-  map = new google.maps.Map(document.getElementById("map"), {
-    zoom: 12,
-    center: defaultPos,
-  });
+  const defaultPos = [22.5726, 88.3639]; // Kolkata
   
-  directionsService = new google.maps.DirectionsService();
-  directionsRenderer = new google.maps.DirectionsRenderer();
-  directionsRenderer.setMap(map);
+  // Prevent re-initialization if map already exists
+  if (!map) {
+    map = L.map("map").setView(defaultPos, 12);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '&copy; OpenStreetMap contributors',
+      maxZoom: 19
+    }).addTo(map);
+  }
 }
 
 function drawRouteOnMap(start, end) {
-  const request = {
-    origin: start,
-    destination: end,
-    travelMode: 'DRIVING'
-  };
-  directionsService.route(request, function(result, status) {
-    if (status == 'OK') {
-      directionsRenderer.setDirections(result);
+  if (routingControl) {
+    map.removeControl(routingControl);
+  }
+
+  routingControl = L.Routing.control({
+    waypoints: [
+      L.latLng(start.lat, start.lng),
+      L.latLng(end.lat, end.lng)
+    ],
+    routeWhileDragging: false,
+    addWaypoints: false, // Don't let users add waypoints by clicking
+    createMarker: function(i, wp, nWps) {
+      // Add markers for start and end
+      let popupContent = i === 0 ? "Start Location" : "Destination Hospital";
+      return L.marker(wp.latLng).bindPopup(popupContent);
     }
-  });
+  }).addTo(map);
 }

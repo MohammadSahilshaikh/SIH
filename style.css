@@ -827,3 +827,10 @@ footer {
     height: auto;
   }
 }
+
+/* Leaflet Map Overrides */
+.leaflet-container { color: #333 !important; }
+.leaflet-routing-container { background-color: #fff !important; color: #333 !important; }
+.leaflet-popup-content { color: #333 !important; }
+.leaflet-routing-alt h2 { color: #333 !important; }
+.leaflet-routing-alt h3 { color: #333 !important; }

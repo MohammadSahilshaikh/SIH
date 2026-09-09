@@ -21,8 +21,8 @@ document.addEventListener('DOMContentLoaded', () => {
       window.scrollTo(0,0);
       
       // Trigger map resize if map view is opened
-      if(targetId === 'view-driver' && typeof google !== 'undefined' && google.maps && map) {
-        google.maps.event.trigger(map, "resize");
+      if(targetId === 'view-driver' && typeof L !== 'undefined' && map) {
+        setTimeout(() => map.invalidateSize(), 100);
       }
     });
   });
