@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Corridor — Emergency-Priority Traffic Signals</title>
+<link rel="stylesheet" href="style.css">
+<style>
+  #map { height: 400px; width: 100%; border-radius: 8px; margin-top: 20px; background: #1C2B45; }
+</style>
+</head>
+<body>
+
+<!-- HOME VIEW -->
+<div id="view-home" class="view active">
+  <section class="hero">
+    <div>
+      <div class="hero__eyebrow">ADAPTIVE SIGNAL CONTROL · EMERGENCY OVERRIDE</div>
+      <h1>Every red light costs a life somewhere on the way to hospital.</h1>
+      <p class="lede">Corridor lets an ambulance, fire truck, or police unit request a green corridor through a city's signal network in seconds — while every other junction keeps optimizing traffic normally.</p>
+    </div>
+
+    <div class="scene">
+      <div class="scene__label">
+        <span>MG Road Junction — J1</span>
+        <span class="live">live</span>
+      </div>
+      <svg viewBox="0 0 320 260" width="100%" height="auto" xmlns="http://www.w3.org/2000/svg">
+        <rect x="0" y="105" width="320" height="50" fill="#1C2B45"/>
+        <rect x="135" y="0" width="50" height="260" fill="#1C2B45"/>
+        <line x1="0" y1="130" x2="320" y2="130" stroke="#2a3a58" stroke-width="2" stroke-dasharray="8 8"/>
+        <line x1="160" y1="0" x2="160" y2="260" stroke="#2a3a58" stroke-width="2" stroke-dasharray="8 8"/>
+        <g id="sig-N">
+          <rect x="146" y="18" width="18" height="46" rx="5" fill="#0F1826" stroke="#263654"/>
+          <circle cx="155" cy="30" r="5" class="l-red" fill="#4A2226"/>
+          <circle cx="155" cy="44" r="5" class="l-amber" fill="#4A2226"/>
+          <circle cx="155" cy="58" r="5" class="l-green" fill="#2FBF71"/>
+        </g>
+        <g id="sig-S">
+          <rect x="146" y="196" width="18" height="46" rx="5" fill="#0F1826" stroke="#263654"/>
+          <circle cx="155" cy="208" r="5" class="l-red" fill="#4A2226"/>
+          <circle cx="155" cy="222" r="5" class="l-amber" fill="#4A2226"/>
+          <circle cx="155" cy="236" r="5" class="l-green" fill="#2FBF71"/>
+        </g>
+        <g id="sig-E">
+          <rect x="256" y="112" width="46" height="18" rx="5" fill="#0F1826" stroke="#263654"/>
+          <circle cx="268" cy="121" r="5" class="l-red" fill="#E5484D"/>
+          <circle cx="282" cy="121" r="5" class="l-amber" fill="#4A2226"/>
+          <circle cx="294" cy="121" r="5" class="l-green" fill="#4A2226"/>
+        </g>
+        <g id="sig-W">
+          <rect x="18" y="112" width="46" height="18" rx="5" fill="#0F1826" stroke="#263654"/>
+          <circle cx="30" cy="121" r="5" class="l-red" fill="#E5484D"/>
+          <circle cx="42" cy="121" r="5" class="l-amber" fill="#4A2226"/>
+          <circle cx="54" cy="121" r="5" class="l-green" fill="#4A2226"/>
+        </g>
+        <g id="ambulance" transform="translate(140,230)">
+          <rect x="0" y="0" width="30" height="16" rx="3" fill="#EAF0F6"/>
+          <rect x="4" y="4" width="8" height="8" fill="#E5484D"/>
+          <animateTransform attributeName="transform" type="translate" values="140,230; 140,20" dur="3.2s" repeatCount="indefinite"/>
+        </g>
+      </svg>
+      <div class="scene__label" style="margin-top:14px;">
+        <span>Mode: <strong style="color:#EAF0F6">Emergency override</strong></span>
+        <span>N–S cleared for ambulance</span>
+      </div>
+    </div>
+  </section>
+
+  <section id="how">
+    <div class="section__head">
+      <h2>What happens between the tap and the green light</h2>
+    </div>
+    <div class="flow">
+      <div class="flow__step">
+        <h3>1. Driver or dispatcher sends a request</h3>
+        <p>From the vehicle or control desk, they submit vehicle type, current junction, and destination.</p>
+      </div>
+      <div class="flow__step">
+        <h3>2. The queue reaches the control room</h3>
+        <p>The dashboard subscribes to live updates — no refresh needed.</p>
+      </div>
+      <div class="flow__step">
+        <h3>3. Operator clears the corridor</h3>
+        <p>One click flips the junctions along the route into emergency mode.</p>
+      </div>
+      <div class="flow__step">
+        <h3>4. Normal adaptive cycling resumes</h3>
+        <p>Once marked complete, junctions return to their regular AI/density-based signal timing.</p>
+      </div>
+    </div>
+  </section>
+</div>
+
+<!-- REQUEST VIEW -->
+<div id="view-request" class="view">
+  <div class="request-wrap">
+    <h1 class="page-title">Request a green corridor</h1>
+    <p class="page-sub">Fill this in from the vehicle or the dispatch desk. The traffic control room is alerted the moment you submit.</p>
+
+    <div class="form-card">
+      <form id="emergency-form">
+        <div class="field">
+          <label>Vehicle type</label>
+          <div class="vehicle-picker" id="vehicle-picker">
+            <label class="vehicle-opt checked" data-value="Ambulance">
+              <input type="radio" name="vehicle_type" value="Ambulance" checked> Ambulance
+            </label>
+            <label class="vehicle-opt" data-value="Fire Truck">
+              <input type="radio" name="vehicle_type" value="Fire Truck"> Fire truck
+            </label>
+            <label class="vehicle-opt" data-value="Police">
+              <input type="radio" name="vehicle_type" value="Police"> Police
+            </label>
+          </div>
+        </div>
+
+        <div class="field-row">
+          <div class="field">
+            <label for="vehicle_number">Vehicle number</label>
+            <input type="text" id="vehicle_number" placeholder="e.g. MH-12 AB 3456" required>
+          </div>
+          <div class="field">
+            <label for="driver_contact">Driver / dispatcher contact</label>
+            <input type="tel" id="driver_contact" placeholder="10-digit mobile number" required>
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="current_junction">Current / nearest junction</label>
+          <select id="current_junction" required>
+            <option value="">Select a junction</option>
+            <option value="J1">J1 — MG Road Junction</option>
+            <option value="J2">J2 — Station Road Junction</option>
+            <option value="J3">J3 — Ring Road Circle</option>
+            <option value="J4">J4 — Hospital Chowk</option>
+            <option value="J5">J5 — City Center Square</option>
+            <option value="J6">J6 — Highway Entry Point</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label for="destination">Destination</label>
+          <input type="text" id="destination" placeholder="e.g. City General Hospital, Sector 12" required>
+        </div>
+
+        <div class="submit-row">
+          <button type="submit" class="btn btn--primary btn--block" id="submit-btn">Send request →</button>
+        </div>
+
+        <div class="status-msg" id="status-msg"></div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- DASHBOARD VIEW -->
+<div id="view-dashboard" class="view">
+  <div class="dash">
+    <div class="dash__head">
+      <div>
+        <h1 style="margin-bottom:4px;">Junction control room</h1>
+        <p style="margin:0; color:var(--text-muted); max-width:52ch;">Six junctions, cycling their normal adaptive timing. When a request comes in, clear its route to override them into an emergency green corridor.</p>
+      </div>
+    </div>
+
+    <div class="dash__grid">
+      <div class="panel">
+        <h2>Junctions</h2>
+        <div class="panel-sub" id="junction-count">Loading live signal state…</div>
+        <div class="junction-grid" id="junction-grid"></div>
+      </div>
+
+      <div class="panel">
+        <h2>Emergency requests</h2>
+        <div class="panel-sub" id="req-count">Waiting for requests…</div>
+        <div class="req-list" id="req-list">
+          <div class="empty-state">No active requests. They'll appear here the moment someone submits one.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- DRIVER MAP VIEW -->
+<div id="view-driver" class="view">
+  <section class="driver-wrap">
+    <div class="driver-panel">
+      <h3>Find Route</h3>
+      <div class="form-group">
+        <label>Current Location (Mock Live Address)</label>
+        <select id="start-location">
+          <option value='{"lat": 22.684, "lng": 88.375}'>NIT Agarpara</option>
+          <option value='{"lat": 22.572, "lng": 88.363}'>Esplanade</option>
+          <option value='{"lat": 22.580, "lng": 88.460}'>Eco Park, New Town</option>
+        </select>
+      </div>
+      
+      <div class="form-group">
+        <label>Specific Hospital (Optional)</label>
+        <select id="hospital-select">
+          <option value="">-- Find Nearest Hospital --</option>
+        </select>
+      </div>
+      
+      <button class="btn btn--primary btn--block" id="btn-find-route">Find Fastest Route</button>
+
+      <div id="route-info" class="route-info"></div>
+    </div>
+
+    <div id="map"></div>
+  </section>
+</div>
+
+<!-- BOTTOM NAVIGATION BAR -->
+<nav class="bottom-nav">
+  <a href="#" class="nav-item active" data-target="view-home">
+    <i>🏠</i>
+    <span>Home</span>
+  </a>
+  <a href="#" class="nav-item" data-target="view-request">
+    <i>🚑</i>
+    <span>Request</span>
+  </a>
+  <a href="#" class="nav-item" data-target="view-dashboard">
+    <i>🎛️</i>
+    <span>Control</span>
+  </a>
+  <a href="#" class="nav-item" data-target="view-driver">
+    <i>🗺️</i>
+    <span>Map</span>
+  </a>
+</nav>
+
+<!-- Scripts -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+<script src="config.js"></script>
+<script src="request.js"></script>
+<script src="dashboard.js"></script>
+<script src="driver.js"></script>
+<script src="spa.js"></script>
+
+<!-- Google Maps API -->
+<script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAOVYRIgupAurZup5y1PRh8Ismb1A3lLao&libraries=places,drawing,marker&callback=initMap"></script>
+
+</body>
+</html>
