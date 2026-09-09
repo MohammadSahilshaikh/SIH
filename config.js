@@ -6,7 +6,7 @@
 // --- Supabase -------------------------------------------------
 // Project Settings → API in your Supabase dashboard
 const SUPABASE_URL = "https://kupcvxpbfclpysnvpycc.supabase.co";       // e.g. https://abcdefgh.supabase.co
-const SUPABASE_ANON_KEY = "YOUR_SUPABASE_ANON_KEY";      // the "anon public" key
+const SUPABASE_ANON_KEY = "sb_publishable_l6otQISH0oiB-KB7diUZmg_RVYU2GtI";      // the "anon public" key
 
 // --- EmailJS ----------------------------------------------------
 // https://dashboard.emailjs.com → Account → General
